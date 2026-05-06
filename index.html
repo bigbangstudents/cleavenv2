@@ -71,10 +71,10 @@ canvas {
 
 <body>
 
-<div id="loading">Loading Model...</div>
+<div id="loading" style="display:none;">Loading Model...</div>
 
 <h1>Gesture Controlled Effects</h1>
-<button onclick="init()">Start Camera</button>
+<button onclick="startApp()">Start Camera</button>
 
 <div id="webcam-container"></div>
 <div id="label-container"></div>
@@ -88,6 +88,11 @@ let model, webcam, labelContainer, maxPredictions;
 let lastTriggerTime = 0;
 const cooldown = 1200; // 1.2 second cooldown
 
+function startApp() {
+    document.getElementById("loading").style.display = "flex";
+    init();
+}
+    
 async function init() {
     try {
         document.getElementById("loading").innerText = "Loading model...";
