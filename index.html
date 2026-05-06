@@ -92,10 +92,8 @@ async function init() {
     try {
         document.getElementById("loading").innerText = "Loading model...";
         
-        const modelURL = "https://bigbangstudents.github.io/cleavenv2/model.json";
-        const metadataURL = "https://bigbangstudents.github.io/cleavenv2/metadata.json";
 
-        model = await tmImage.load(modelURL, metadataURL);
+        model = await tmImage.load("model.json", "metadata.json");
         maxPredictions = model.getTotalClasses();
 
         document.getElementById("loading").innerText = "Starting camera...";
