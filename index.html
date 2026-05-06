@@ -49,19 +49,13 @@ canvas {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    animation: explode 0.8s ease-out forwards;
-}
-
-@keyframes explode {
-    from { transform: scale(0); opacity: 1; }
-    to { transform: scale(3); opacity: 0; }
 }
 
 #loading {
     position: fixed;
     inset: 0;
     background: black;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     font-size: 20px;
@@ -71,7 +65,7 @@ canvas {
 
 <body>
 
-<div id="loading" style="display:none;">Loading Model...</div>
+<div id="loading">Loading Model...</div>
 
 <h1>Gesture Controlled Effects</h1>
 <button onclick="startApp()">Start Camera</button>
@@ -84,34 +78,29 @@ canvas {
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 
 <script>
+const URL = "./"; // IMPORTANT: files are in root
+
 let model, webcam, labelContainer, maxPredictions;
 let lastTriggerTime = 0;
-const cooldown = 1200; // 1.2 second cooldown
+const cooldown = 1200;
 
 function startApp() {
     document.getElementById("loading").style.display = "flex";
     init();
 }
-    
+
 async function init() {
     try {
-        document.getElementById("loading").innerText = "Loading model...";
-        
-
-        const URL = "https://bigbangstudents.github.io/cleavenv2/";
-
-        const modelURL = URL + "model.json";    
+        const modelURL = URL + "model.json";
         const metadataURL = URL + "metadata.json";
 
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
-        document.getElementById("loading").innerText = "Starting camera...";
-
-        const flip = window.innerWidth < 768;
+        const flip = true;
         webcam = new tmImage.Webcam(300, 300, flip);
 
-        await webcam.setup({ facingMode: "user" });
+        await webcam.setup();
         await webcam.play();
         window.requestAnimationFrame(loop);
 
@@ -127,7 +116,7 @@ async function init() {
         document.getElementById("loading").style.display = "none";
 
     } catch (error) {
-        console.error("ERROR:", error);
+        console.error("MODEL LOAD ERROR:", error);
         document.getElementById("loading").innerText =
             "Error loading model. Check console.";
     }
@@ -143,7 +132,6 @@ async function predict() {
     const predictions = await model.predict(webcam.canvas);
 
     let highest = predictions[0];
-
     for (let i = 1; i < predictions.length; i++) {
         if (predictions[i].probability > highest.probability) {
             highest = predictions[i];
@@ -163,7 +151,6 @@ async function predict() {
         } else if (highest.className === "Gravity pull") {
             triggerGravity();
         }
-
         lastTriggerTime = now;
     }
 }
@@ -197,7 +184,6 @@ function triggerExplosion() {
         });
 
         container.appendChild(particle);
-
         setTimeout(() => particle.remove(), 800);
     }
 }
@@ -231,7 +217,6 @@ function triggerGravity() {
         });
 
         container.appendChild(particle);
-
         setTimeout(() => particle.remove(), 1000);
     }
 }
@@ -239,5 +224,3 @@ function triggerGravity() {
 
 </body>
 </html>
-
-
