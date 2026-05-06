@@ -91,8 +91,11 @@ const cooldown = 1200; // 1.2 second cooldown
 async function init() {
     try {
         document.getElementById("loading").innerText = "Loading model...";
+        
+        const modelURL = "https://bigbangstudents.github.io/cleavenv2/model.json";
+        const metadataURL = "https://bigbangstudents.github.io/cleavenv2/metadata.json";
 
-        model = await tmImage.load("model.json", "metadata.json");
+        model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
 
         document.getElementById("loading").innerText = "Starting camera...";
